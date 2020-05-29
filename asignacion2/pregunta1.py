@@ -9,9 +9,10 @@ def main():
 
     data_dist_prov = data.map(lambda x: (x[94], 1 if x[95] == 'Lima' else x[95]))
     
-    data_lima = data_dist_prov.filter(lambda x: x[1] == 1).reduceByKey(lambda x, y: x + y)
+    data_lima = data_dist_prov.filter(lambda x: x[1] == 1).reduceByKey(lambda x, y: x + y).sortBy(lambda x: x[1], ascending = False)
 
-    print(data_lima.take(3))
+    for data in data_lima.collect():
+        print(f'{data[0]} {data[1]}')
     
 
 if __name__ == "__main__":

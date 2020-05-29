@@ -31,10 +31,12 @@ def Main():
     else:
       return False
 
+  # Se filtra por distrito y por si tiene patio, depósito o los 2
   data_lima_patio = data.filter(filtrarDatasetPatio).map(lambda x: ("lima_patio", (checkIfIsFloat(x[15]), 1)))
   data_lima_deposito = data.filter(filtrarDatasetDeposito).map(lambda x: ("lima_deposito", (checkIfIsFloat(x[15]), 1)))
   data_lima_deposito_patio = data.filter(filtrarDatasetPatioDeposito).map(lambda x: ("lima_deposito_patio", (checkIfIsFloat(x[15]), 1)))
   
+  # Se calcula el precio promedio
   print(data_lima_patio.reduceByKey(lambda x, y: (x[0] + y[0], x[1] + y[1])).map(lambda x: (x[0], x[1][0] / x[1][1])).collect())
   print(data_lima_deposito.reduceByKey(lambda x, y: (x[0] + y[0], x[1] + y[1])).map(lambda x: (x[0], x[1][0] / x[1][1])).collect())
   print(data_lima_deposito_patio.reduceByKey(lambda x, y: (x[0] + y[0], x[1] + y[1])).map(lambda x: (x[0], x[1][0] / x[1][1])).collect())

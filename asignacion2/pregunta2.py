@@ -14,11 +14,14 @@ def main():
     
   data = sqlContext.read.csv("urbania_data.csv", header=True).rdd
 
-  data_dist_prov = data.map(lambda x: (x[94], checkIfIsFloat(x[15]) / checkIfIsFloat(x[26]))) # Provincia, precio, area total m2
+  formated_data = data.map(lambda x: (x[94], checkIfIsFloat(x[15]) / checkIfIsFloat(x[26]))) # Distrito, precio por m2
     
+  reduced_data = formated_data.groupByKey().map(lambda x : (x[0],sum(list(x[1])) / len(list(x[1])) )) # Calculo del promedio por distrito
 
-  print(data_dist_prov.groupByKey().map(lambda x : (x[0],sum(list(x[1])) / len(list(x[1])) )).sortBy(lambda x: x[1], ascending=False).collect())
-  #print(data_dist_prov.reduceByKey())
+  sorted_data = reduced_data.sortBy(lambda x: x[1], ascending=False).collect()
+
+  for data in sorted_data:
+    print(f'{data[0]} {data[1]}')
 
     
 if __name__ == "__main__":
